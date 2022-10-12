@@ -2,11 +2,12 @@
 // https://algorithm.joho.info/programming/python/opencv-frame-difference-surveillance-camera-py/
 //  window2．の部分のコメントアウトを外すと差分の動きがわかる.(window1をコメントアウトすること)
 
-package main
+package def
 
 import (
 	"fmt"
 	"gocv.io/x/gocv"
+	"time"
 )
 
 func PointCameraDetectMotion() string {
@@ -14,21 +15,28 @@ func PointCameraDetectMotion() string {
 	minMoment := 8000
 	count := 0
 
-	// open webcam
+	// open webcam バックグラウンドで動かすときはここをコメントアウト
 	webcam, _ := gocv.VideoCaptureDevice(0)
-	// open display window
+
+	//これないと連続撮影できない カメラのindex番号が使用中になるため
+	defer webcam.Close()
+
+	// open display window()
 	window1 := gocv.NewWindow("detectMotion")
 
 	//差分の画像を表示するウィンドウ
 	//window2 := gocv.NewWindow("detectMotion")
 
-	// prepare image matrix データを格納する準備
+	// prepare imag matrix データを格納する準備
+	img := gocv.NewMat()
 	img1 := gocv.NewMat()
 	img2 := gocv.NewMat()
 	sabun := gocv.NewMat()
 
 	for {
 		// webカメラから画像を取得
+		webcam.Read(&img)
+
 		webcam.Read(&img1)
 
 		webcam.Read(&img2)
@@ -66,8 +74,12 @@ func PointCameraDetectMotion() string {
 
 		if count > 20 {
 			count = 0
+			now := time.Now()
+			//img1をimagesフォルダに保存しpathを返す
+			path1 := "images/" + now.Format("20060102150405") + ".jpg"
+			gocv.IMWrite(path1, img)
 			fmt.Println("Lineに通知")
-			return "異常あり"
+			return path1
 		}
 	}
 }
