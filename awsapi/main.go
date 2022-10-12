@@ -28,7 +28,19 @@ func main() {
 	router.Static("/images", "./images")
 	router.POST("/getimage", handleUpload)
 	//router.Run(":3000")
-	router.RunTLS(":8443", "/etc/letsencrypt/live/techguild-test.ddns.net/cert.pem", "/etc/letsencrypt/live/techguild-test.ddns.net/privkey.pem")
+
+	//envファイルを読み込む
+	err := godotenv.Load(".env")
+	if err != nil {
+		fmt.Println("Error loading .env file")
+	}
+
+	//CERT_PATHを読み込む
+	certPath := os.Getenv("CERT_PATH")
+	//PRIVATE_KEY_PATHを読み込む
+	privateKeyPath := os.Getenv("PRIVATE_KEY_PATH")
+
+	router.RunTLS(":8443", certPath, privateKeyPath)
 }
 
 func handleUpload(c *gin.Context) {
@@ -170,12 +182,15 @@ func postImageToLine(dst string) {
 
 	// 送信用のデータ
 	// messageの中にtype,textの配列を追加すれば一度に複数のメッセージを送信できます。(最大件数5)
+
+	url = os.Getenv("URL")
+
 	data := map[string][]map[string]string{
 		"messages": {
 			{
 				"type":               "image",
-				"originalContentUrl": "https://techguild-test.ddns.net:8443/images/" + dst,
-				"previewImageUrl":    "https://techguild-test.ddns.net:8443/images/" + dst,
+				"originalContentUrl": url + dst,
+				"previewImageUrl":    url + dst,
 			},
 		},
 	}

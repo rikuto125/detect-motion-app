@@ -1,6 +1,7 @@
 // 参考Url
 // https://algorithm.joho.info/programming/python/opencv-frame-difference-surveillance-camera-py/
 //  window2．の部分のコメントアウトを外すと差分の動きがわかる.(window1をコメントアウトすること)
+//  最新版ではwindow1,2ともにコメントアウト　cliだけで動かすため
 
 package def
 
@@ -22,7 +23,7 @@ func PointCameraDetectMotion() string {
 	defer webcam.Close()
 
 	// open display window()
-	window1 := gocv.NewWindow("detectMotion")
+	//window1 := gocv.NewWindow("detectMotion")
 
 	//差分の画像を表示するウィンドウ
 	//window2 := gocv.NewWindow("detectMotion")
@@ -42,9 +43,9 @@ func PointCameraDetectMotion() string {
 		webcam.Read(&img2)
 
 		// 画像(動画)を表示
-		window1.IMShow(img1)
+		//window1.IMShow(img1)
 		// これがないとウィンドウが表示されない引数は(1ms待つ)という意味
-		window1.WaitKey(1)
+		//window1.WaitKey(1)
 
 		// img1とimg2をグレースケールに変換
 		gocv.CvtColor(img1, &img1, gocv.ColorBGRToGray)
